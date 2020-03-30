@@ -1,0 +1,94 @@
+--drop schema bank cascade;
+
+CREATE SCHEMA IF NOT EXISTS Bank;
+
+--drop table Bank.customer;
+
+CREATE TABLE Bank.CUSTOMER (
+ CUSTOMER_ID SERIAL PRIMARY KEY,
+ FIRSTNAME TEXT NOT NULL,
+ LASTNAME TEXT NOT NULL,
+ USER_EMAIL TEXT  NOT null UNIQUE,--email 
+ LOGIN_ID TEXT  NOT null UNIQUE, 
+ LOGIN_PASSWORD TEXT NOT null, 
+ AUTHENCATION_TYPE TEXT NOT null
+);
+
+
+CREATE TABLE Bank.Account (
+ ACC_ID SERIAL PRIMARY KEY,
+ ACCOUNT_NUMBER text not null,
+ ACC_TYPE_ID INT NOT NULL,
+ ACC_BALANCE numeric(12,2) NOT NULL
+ );
+
+--Junction Table to support many-to-many relationship
+CREATE TABLE BANK.Customer_Account (
+  CUSTOMER_ID    int REFERENCES BANK.CUSTOMER (CUSTOMER_ID) ON UPDATE CASCADE ON DELETE cascade,
+  ACC_ID int REFERENCES BANK.ACCOUNT (ACC_ID) ON UPDATE CASCADE ON DELETE cascade,
+  CONSTRAINT Customer_Account_pkey PRIMARY KEY (CUSTOMER_ID, ACC_ID)  -- explicit pk
+);
+ 
+CREATE TABLE Bank.ACCOUNT_TYPE ( 
+ TYPE_ID SERIAL PRIMARY KEY,
+ ACC_TYPE TEXT NOT NULL 
+);
+
+
+
+
+CREATE TABLE Bank.AUTHTENTICATION_TYPE ( 
+ TYPE_ID SERIAL PRIMARY KEY,
+ AUTH_TYPE TEXT NOT NULL 
+);
+
+
+
+--Set up data in tables
+
+INSERT INTO Bank.ACCOUNT_TYPE (ACC_TYPE) VALUES('CREDIT');
+INSERT INTO Bank.ACCOUNT_TYPE (ACC_TYPE) VALUES('CHECKING');
+INSERT INTO Bank.ACCOUNT_TYPE (ACC_TYPE) VALUES('SAVING');
+
+INSERT INTO Bank.AUTHTENTICATION_TYPE (AUTH_TYPE) VALUES('BASIC');
+INSERT INTO Bank.AUTHTENTICATION_TYPE (AUTH_TYPE) VALUES('DIGEST');
+INSERT INTO Bank.AUTHTENTICATION_TYPE (AUTH_TYPE) VALUES('OTP');
+
+
+
+INSERT INTO Bank.CUSTOMER (FIRSTNAME, LASTNAME , USER_EMAIL,  LOGIN_ID , LOGIN_PASSWORD ,  AUTHENCATION_TYPE)
+VALUES('GAYTHRI','ADDAGADA','gayathri.addagada@gmail.com','gaddagada','demo123','Basic');
+INSERT INTO Bank.CUSTOMER (FIRSTNAME, LASTNAME , USER_EMAIL,  LOGIN_ID , LOGIN_PASSWORD ,  AUTHENCATION_TYPE)
+VALUES('GAYTHRI','ADDAGADA','gayathri2.addagada@gmail.com','gaddagada2','demo123','Basic');
+INSERT INTO Bank.CUSTOMER (FIRSTNAME, LASTNAME , USER_EMAIL,  LOGIN_ID , LOGIN_PASSWORD ,  AUTHENCATION_TYPE)
+VALUES('GAYTHRI','ADDAGADA','gayathri3.addagada@gmail.com','gaddagada3','demo123','Basic');
+INSERT INTO Bank.CUSTOMER (FIRSTNAME, LASTNAME , USER_EMAIL,  LOGIN_ID , LOGIN_PASSWORD ,  AUTHENCATION_TYPE)
+VALUES('GAYTHRI','ADDAGADA','gayathri4.addagada@gmail.com','gaddagada4','demo123','Basic');
+
+insert into Bank.Account (ACCOUNT_NUMBER,ACC_TYPE_ID, ACC_BALANCE) values ('111111111','1','1111.00');
+insert into Bank.Account (ACCOUNT_NUMBER,ACC_TYPE_ID, ACC_BALANCE) values ('222222222','2','2222.00');
+insert into Bank.Account (ACCOUNT_NUMBER,ACC_TYPE_ID, ACC_BALANCE) values ('333333333','3','3333.00');
+
+insert into BANK.Customer_Account (CUSTOMER_ID,ACC_ID) values (1,1);
+insert into BANK.Customer_Account (CUSTOMER_ID,ACC_ID) values (1,2);
+insert into BANK.Customer_Account (CUSTOMER_ID,ACC_ID) values (2,2);
+insert into BANK.Customer_Account (CUSTOMER_ID,ACC_ID) values (3,3);
+insert into BANK.Customer_Account (CUSTOMER_ID,ACC_ID) values (3,1);
+
+
+COMMIT;
+--
+--select * from BANK.ACCOUNT_TYPE;
+--
+--select * from BANK.AUTHTENTICATION_TYPE;
+--
+--select * from BANK.CUSTOMER;
+--
+--select * from BANK.Account;
+--
+--select * from BANK.Customer_Account;
+--delete  from BANK.CUSTOMER where  CUSTOMER_ID=1;
+--delete  from BANK.Account where  ACC_ID=1;
+
+
+
